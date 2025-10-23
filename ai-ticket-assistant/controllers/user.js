@@ -6,16 +6,13 @@ import { inngest } from "../inngest/client.js";
 export const signup = async (req, res) => {
   const { email, password, skills = [] } = req.body;
   try {
-    const hashed = brcypt.hash(password, 10);
+    const hashed = await brcypt.hash(password, 10); // <-- fixed
     const user = await User.create({ email, password: hashed, skills });
 
-    //Fire inngest event
-
+    // Fire Inngest event
     await inngest.send({
       name: "user/signup",
-      data: {
-        email,
-      },
+      data: { email },
     });
 
     const token = jwt.sign(
@@ -33,14 +30,11 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = User.findOne({ email });
+    const user = await User.findOne({ email }); // <-- fixed
     if (!user) return res.status(401).json({ error: "User not found" });
 
     const isMatch = await brcypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
+    if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
 
     const token = jwt.sign(
       { _id: user._id, role: user.role },
@@ -52,7 +46,6 @@ export const login = async (req, res) => {
     res.status(500).json({ error: "Login failed", details: error.message });
   }
 };
-
 export const logout = async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];

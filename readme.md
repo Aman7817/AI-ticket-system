@@ -205,9 +205,7 @@ A smart ticket management system that uses AI to automatically categorize, prior
 - `mongoose`: ^8.13.2
 - `nodemailer`: ^6.10.1
 
-## 🤝 Contributing
 
-we don't accept contributions for this project, as this is a part of a video and code files needs to given as it is.
 
 ## 🙏 Acknowledgments
 
